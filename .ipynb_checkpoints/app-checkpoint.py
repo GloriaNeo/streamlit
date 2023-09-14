@@ -1,8 +1,6 @@
 # Python In-built packages
 from pathlib import Path
 import PIL
-import PIL.Image as Image
-from PIL import ExifTags
 
 # External packages
 import streamlit as st
@@ -61,29 +59,13 @@ if source_radio == settings.IMAGE:
         try:
             if source_img is None:
                 default_image_path = str(settings.DEFAULT_IMAGE)
-                default_image = Image.open(default_image_path)
+                default_image = PIL.Image.open(default_image_path)
                 st.image(default_image_path, caption="Default Image",
-                        use_column_width=True)
+                         use_column_width=True)
             else:
-                # Open the uploaded image without applying Exif orientation
-                uploaded_image = Image.open(source_img)
-                
-                # Check and adjust orientation if necessary
-                for orientation in ExifTags.TAGS.keys():
-                    if ExifTags.TAGS[orientation] == 'Orientation':
-                        break
-                if hasattr(uploaded_image, '_getexif'):
-                    exif = uploaded_image._getexif()
-                    if exif is not None:
-                        if exif[orientation] == 3:
-                            uploaded_image = uploaded_image.rotate(180, expand=True)
-                        elif exif[orientation] == 6:
-                            uploaded_image = uploaded_image.rotate(270, expand=True)
-                        elif exif[orientation] == 8:
-                            uploaded_image = uploaded_image.rotate(90, expand=True)
-
-                st.image(uploaded_image, caption="Uploaded Image",
-                        use_column_width=True)
+                uploaded_image = PIL.Image.open(source_img)
+                st.image(source_img, caption="Uploaded Image",
+                         use_column_width=True)
         except Exception as ex:
             st.error("Error occurred while opening the image.")
             st.error(ex)

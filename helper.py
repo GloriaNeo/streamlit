@@ -6,6 +6,28 @@ from pytube import YouTube
 import settings
 
 
+def make_image_square(image_path, square_size):
+    # Open the original image
+    original_image = Image.open(image_path)
+
+    # Calculate the maximum square size
+    max_side_length = min(original_image.width, original_image.height)
+
+    # Create a blank square image with the specified size
+    square_image = Image.new('RGB', (square_size, square_size), (255, 255, 255))
+
+    # Calculate the position to paste the original image centered in the square
+    left = (square_size - max_side_length) // 2
+    top = (square_size - max_side_length) // 2
+    right = left + max_side_length
+    bottom = top + max_side_length
+
+    # Paste the original image into the square
+    square_image.paste(original_image, (left, top, right, bottom))
+
+    return square_image
+    
+
 def load_model(model_path):
     """
     Loads a YOLO object detection model from the specified model_path.
